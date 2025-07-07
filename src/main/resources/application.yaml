@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: auth-ms-colegio
+  r2dbc:
+    url: r2dbc:mysql://localhost:3390/auth
+    username: root-auth
+    password: 12345
+server:
+  port: 8080
+
+security:
+  password:
+    default: 10002000
