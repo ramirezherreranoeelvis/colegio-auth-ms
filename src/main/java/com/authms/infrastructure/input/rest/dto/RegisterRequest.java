@@ -41,8 +41,11 @@ public class RegisterRequest {
       @ValueOfEnum(enumClass = RolUser.class, message = "El rol de usuario es obligatorio")
       private RolUser rol;
 
-      private String dniFather;
-      private String dniMother;
-      private String dniRepresentative;
+      @Digits(integer = 8, fraction = 0, message = "El dni del padre debe tener 8 digitos")
+      private Integer dniFather;
+      @Digits(integer = 8, fraction = 0, message = "El dni de la madre debe tener 8 digitos")
+      private Integer dniMother;
+      @Digits(integer = 8, fraction = 0, message = "El dni del representante debe tener 8 digitos")
+      private Integer dniRepresentative;
 
 }

@@ -6,10 +6,12 @@ import com.authms.application.port.input.RegisterUserUseCase;
 import com.authms.application.port.output.IAccessRepository;
 import com.authms.application.port.output.IUserRepository;
 import com.authms.domain.Access;
+import com.authms.domain.AuditActionType;
 import com.authms.domain.Token;
 import com.authms.domain.User;
 import com.authms.domain.exception.UserAlreadyExistsException;
 import com.authms.domain.mapper.DomainMapper;
+import com.authms.infrastructure.config.AuditingConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.token.TokenService;
@@ -41,7 +43,7 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase,
 
       @Override
       public Mono<User> registerUser(User user) {
-
+            logger.info("registerUser: " + user.toString());
             return this.userRepository.existsByDni(user.getDni())
                   .filter(exists -> !exists)
                   .switchIfEmpty(Mono.error(new UserAlreadyExistsException("Ya existe un usuario con ese dni registrado")))
@@ -50,7 +52,11 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase,
                         user.setAccess(acc);
                         return user;
                   })
-                  .flatMap(this.userRepository::save);
+                  .flatMap(user1 -> {
+                        AuditingConfig.setAuditor(AuditActionType.SELF_REGISTRATION.getValue());
+                        return this.userRepository.save(user1)
+                              .doFinally(s -> AuditingConfig.clearAuditor());
+                  });
       }
 
       public Mono<Access> createAccess(User user) {
@@ -58,11 +64,16 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase,
             String baseUsername = buildBaseUsername(user);
             String password = this.passwordEncoder.encode(this.passwordDefault);
             logger.info("baseUsername: " + baseUsername);
-            return this.accessRepository.save(Access.builder()
-                  .password(password)
-                  .username(baseUsername)
-                  .accessEnabled(true)
-                  .build());
+
+            return nextFreeUsername(baseUsername, 0)
+                  .flatMap(username -> {
+                        logger.info("username: " + username);
+                        return this.accessRepository.save(Access.builder()
+                              .password(password)
+                              .username(username)
+                              .accessEnabled(true)
+                              .build());
+                  });
       }
 
       /**

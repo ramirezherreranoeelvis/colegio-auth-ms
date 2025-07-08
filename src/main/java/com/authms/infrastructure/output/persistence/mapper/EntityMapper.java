@@ -20,6 +20,7 @@ public class EntityMapper {
                   .surnamePaternal(userDomain.getSurnamePaternal())
                   .surnameMaternal(userDomain.getSurnameMaternal())
                   .phone(userDomain.getPhone())
+                  .rol(userDomain.getRol())
                   .idAccess(userDomain.getAccess().getId())
                   .idFather(idFather)
                   .idMother(idMother)

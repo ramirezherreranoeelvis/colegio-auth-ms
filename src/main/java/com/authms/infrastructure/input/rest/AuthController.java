@@ -3,6 +3,7 @@ package com.authms.infrastructure.input.rest;
 import com.authms.application.port.input.LoginUseCase;
 import com.authms.application.port.input.RefreshTokenUseCase;
 import com.authms.application.port.input.RegisterUserUseCase;
+import com.authms.infrastructure.config.Logger;
 import com.authms.infrastructure.input.rest.dto.LoginRequest;
 import com.authms.infrastructure.input.rest.dto.LoginResponse;
 import com.authms.infrastructure.input.rest.dto.RegisterRequest;
@@ -16,7 +17,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/api/auth")
 @RestController
@@ -28,6 +33,7 @@ class AuthController {
       private final RefreshTokenUseCase refreshTokenUseCase;
       private final RegisterUserUseCase registerUserUseCase;
       private final AuthMapper authMapper;
+      private final Logger logger;
 
       @PostMapping("/login")
       public Mono<ResponseEntity<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
@@ -36,6 +42,7 @@ class AuthController {
 
       @PostMapping("/register")
       public Mono<ResponseEntity<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request) {
+            logger.log("register: " + request.toString());
             return authMapper.mapToUser(request)
                   .flatMap(registerUserUseCase::registerUser)
                   .map(user -> ResponseEntity.ok(
@@ -44,5 +51,4 @@ class AuthController {
                               .password(user.getAccess().getPassword())
                               .build()));
       }
-
 }

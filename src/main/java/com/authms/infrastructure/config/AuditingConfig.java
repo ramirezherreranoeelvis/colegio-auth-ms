@@ -1,6 +1,6 @@
-package com.uguimar.authms.infrastructure.config;
+package com.authms.infrastructure.config;
 
-import com.uguimar.authms.domain.model.AuditActionType;
+import com.authms.domain.AuditActionType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.ReactiveAuditorAware;

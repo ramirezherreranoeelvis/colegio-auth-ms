@@ -1,4 +1,4 @@
-package com.uguimar.authms.domain.model;
+package com.authms.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
