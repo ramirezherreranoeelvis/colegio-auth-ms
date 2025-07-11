@@ -37,7 +37,15 @@ class AuthController {
 
       @PostMapping("/login")
       public Mono<ResponseEntity<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
-            return Mono.just(ResponseEntity.ok(LoginResponse.builder().build()));
+            return loginUseCase.login(request.getUsername(), request.getPassword())
+                  .map(tokenPair -> ResponseEntity.ok(
+                        LoginResponse.builder()
+                              .accessToken(tokenPair.getAccessToken().getValue())
+                              .refreshToken(tokenPair.getRefreshToken().getValue())
+                              .expiresIn(tokenPair.getAccessToken().getExpiryDate())
+                              .tokenType("Bearer")
+                              .build()
+                  ));
       }
 
       @PostMapping("/register")
@@ -51,4 +59,5 @@ class AuthController {
                               .password(user.getAccess().getPassword())
                               .build()));
       }
+
 }

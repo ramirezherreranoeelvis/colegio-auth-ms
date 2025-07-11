@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface IR2dbcUserCrudRepository extends ReactiveCrudRepository<UserEntity, String> {
+public interface IR2dbcUserRepository extends ReactiveCrudRepository<UserEntity, String> {
 
       Mono<Boolean> existsByDni(String dni);
 
       Mono<UserEntity> findByDni(String dni);
+
+      Mono<UserEntity> findByIdAccess(String accessId);
 
 }

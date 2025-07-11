@@ -4,7 +4,7 @@ import com.authms.domain.User;
 import com.authms.domain.mapper.DomainMapper;
 import com.authms.infrastructure.config.Logger;
 import com.authms.infrastructure.input.rest.dto.RegisterRequest;
-import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcUserCrudRepository;
+import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Component
 public class AuthMapper {
 
-      private final IR2dbcUserCrudRepository userRepository;
+      private final IR2dbcUserRepository userRepository;
       private final DomainMapper domainMapper;
       private final Logger logger;
 

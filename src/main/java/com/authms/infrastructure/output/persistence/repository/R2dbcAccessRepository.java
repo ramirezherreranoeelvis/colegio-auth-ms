@@ -1,15 +1,10 @@
 package com.authms.infrastructure.output.persistence.repository;
 
 import com.authms.application.port.output.IAccessRepository;
-import com.authms.application.port.output.IUserRepository;
 import com.authms.domain.Access;
-import com.authms.domain.User;
 import com.authms.domain.mapper.DomainMapper;
-import com.authms.infrastructure.output.persistence.entity.AccessEntity;
-import com.authms.infrastructure.output.persistence.entity.UserEntity;
 import com.authms.infrastructure.output.persistence.mapper.EntityMapper;
 import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcAccessRepository;
-import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcUserCrudRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +41,12 @@ public class R2dbcAccessRepository implements IAccessRepository {
       @Override
       public Mono<Boolean> existsByUsername(String dni) {
             return accessRepository.existsByUsername(dni);
+      }
+
+      @Transactional
+      public Mono<Access> findByUsername(String username) {
+            return accessRepository.findByUsername(username)
+                  .map(domainMapper::mapToDomain);
       }
 
 }

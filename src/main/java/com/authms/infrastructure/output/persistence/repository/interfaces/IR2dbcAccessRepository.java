@@ -8,4 +8,5 @@ import reactor.core.publisher.Mono;
 @Service
 public interface IR2dbcAccessRepository extends ReactiveCrudRepository<AccessEntity, String> {
       Mono<Boolean> existsByUsername(String username);
+      Mono<AccessEntity> findByUsername(String username);
 }

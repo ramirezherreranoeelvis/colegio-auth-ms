@@ -4,36 +4,68 @@ import com.authms.application.port.input.LoginUseCase;
 import com.authms.application.port.input.RefreshTokenUseCase;
 import com.authms.application.port.input.RegisterUserUseCase;
 import com.authms.application.port.output.IAccessRepository;
+import com.authms.application.port.output.IPasswordEncoder;
 import com.authms.application.port.output.IUserRepository;
-import com.authms.domain.Access;
-import com.authms.domain.AuditActionType;
-import com.authms.domain.Token;
-import com.authms.domain.User;
+import com.authms.domain.*;
+import com.authms.domain.exception.AuthenticationException;
 import com.authms.domain.exception.UserAlreadyExistsException;
 import com.authms.domain.mapper.DomainMapper;
 import com.authms.infrastructure.config.AuditingConfig;
+import com.authms.infrastructure.config.Logger;
+import com.authms.infrastructure.output.security.IJwtRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @RequiredArgsConstructor
 @Service
 public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase, RegisterUserUseCase {
 
-      private java.util.logging.Logger logger = java.util.logging.Logger.getLogger(getClass().getName());
+      private final Logger logger;
       private final IUserRepository userRepository;
       private final IAccessRepository accessRepository;
-      private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+      private final IPasswordEncoder passwordEncoder;
+      private final IJwtRepository jwtRepository;
+      private final DomainMapper domainMapper;
+
       @Value("${security.password.default}")
       private String passwordDefault;
 
       @Override
-      public Mono<Token> login(String username, String password) {
-            return null;
+      public Mono<TokenPair> login(String username, String password) {
+            return this.accessRepository.findByUsername(username)
+                  .switchIfEmpty(Mono.error(new AuthenticationException("Usuario no existente")))
+                  .filter(access -> passwordEncoder.matches(password, access.getPassword()))
+                  .switchIfEmpty(Mono.error(new AuthenticationException("Contraseña inválida")))
+                  .flatMap(domainMapper::mapToDomainUser)
+                  .map(user -> {
+                        var accessTokenValue = jwtRepository.generateToken(user, TokenType.ACCESS);
+                        var refreshTokenValue = jwtRepository.generateToken(user, TokenType.REFRESH);
+
+                        var accessToken = Token.builder()
+                              .userId(user.getId())
+                              .value(accessTokenValue)
+                              .expiryDate(Instant.now().plus(30, ChronoUnit.MINUTES))
+                              .type(TokenType.ACCESS)
+                              .build();
+
+                        var refreshToken = Token.builder()
+                              .userId(user.getId())
+                              .value(refreshTokenValue)
+                              .expiryDate(Instant.now().plus(7, ChronoUnit.DAYS))
+                              .type(TokenType.REFRESH)
+                              .build();
+                        return TokenPair.builder()
+                              .accessToken(accessToken)
+                              .refreshToken(refreshToken)
+                              .build();
+                  });
+
       }
 
       @Override
@@ -43,7 +75,7 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase,
 
       @Override
       public Mono<User> registerUser(User user) {
-            logger.info("registerUser: " + user.toString());
+            logger.log("registerUser: " + user.toString());
             return this.userRepository.existsByDni(user.getDni())
                   .filter(exists -> !exists)
                   .switchIfEmpty(Mono.error(new UserAlreadyExistsException("Ya existe un usuario con ese dni registrado")))
@@ -60,14 +92,14 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase,
       }
 
       public Mono<Access> createAccess(User user) {
-            logger.info("createAccess: " + user.toString());
+            logger.log("createAccess: " + user.toString());
             String baseUsername = buildBaseUsername(user);
             String password = this.passwordEncoder.encode(this.passwordDefault);
-            logger.info("baseUsername: " + baseUsername);
+            logger.log("baseUsername: " + baseUsername);
 
             return nextFreeUsername(baseUsername, 0)
                   .flatMap(username -> {
-                        logger.info("username: " + username);
+                        logger.log("username: " + username);
                         return this.accessRepository.save(Access.builder()
                               .password(password)
                               .username(username)

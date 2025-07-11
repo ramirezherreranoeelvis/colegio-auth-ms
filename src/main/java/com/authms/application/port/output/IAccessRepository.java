@@ -8,4 +8,7 @@ public interface IAccessRepository {
 
       Mono<Boolean> existsByUsername(String username);
 
+      Mono<Access> findByUsername(String username);
+
+
 }

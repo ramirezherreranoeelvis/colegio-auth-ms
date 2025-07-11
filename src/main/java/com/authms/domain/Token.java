@@ -12,8 +12,15 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Token {
+
       private String id;
-      private String usrId;
+      private String userId;
       private String value;
       private Instant expiryDate;
+      private TokenType type;
+
+      public boolean isExpired() {
+            return expiryDate != null && expiryDate.isBefore(Instant.now());
+      }
+
 }

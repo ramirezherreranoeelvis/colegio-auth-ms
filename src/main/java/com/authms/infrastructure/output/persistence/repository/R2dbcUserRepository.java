@@ -2,11 +2,13 @@ package com.authms.infrastructure.output.persistence.repository;
 
 import com.authms.application.port.output.IUserRepository;
 
+import com.authms.domain.Access;
 import com.authms.domain.User;
 import com.authms.domain.mapper.DomainMapper;
+import com.authms.infrastructure.config.Logger;
 import com.authms.infrastructure.output.persistence.entity.UserEntity;
 import com.authms.infrastructure.output.persistence.mapper.EntityMapper;
-import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcUserCrudRepository;
+import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,30 +21,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class R2dbcUserRepository implements IUserRepository {
 
-      private java.util.logging.Logger logger = java.util.logging.Logger.getLogger(getClass().getName());
-      private final IR2dbcUserCrudRepository userRepository;
+      private Logger logger;
+      private final IR2dbcUserRepository userRepository;
       private final DomainMapper domainMapper;
       private final EntityMapper entityMapper;
 
       @Override
       @Transactional
       public Mono<User> save(User userDomain) {
-            logger.info("Saving user: " + userDomain);
+            logger.log("Saving user: " + userDomain);
             if (userDomain.getId() == null) {
                   userDomain.setId(UUID.randomUUID().toString());
             }
-            logger.info("id user: " + userDomain.getId());
+            logger.log("id user: " + userDomain.getId());
             UserEntity userEntity = entityMapper.mapToEntity(userDomain);
             userEntity.markNew();
 
-            logger.info("Saving userEntity: " + userEntity);
+            logger.log("Saving userEntity: " + userEntity);
             return userRepository.save(userEntity)
                   .flatMap(domainMapper::mapToDomain);
       }
 
       @Override
+      @Transactional
       public Mono<Boolean> existsByDni(String dni) {
             return userRepository.existsByDni(dni);
+      }
+
+      @Override
+      public Mono<User> findByAccess(Access access) {
+            return this.userRepository.findByIdAccess(access.getId())
+                  .flatMap(domainMapper::mapToDomain);
       }
 
 }

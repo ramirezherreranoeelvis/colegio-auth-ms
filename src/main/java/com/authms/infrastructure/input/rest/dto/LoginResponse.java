@@ -11,6 +11,11 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponse {
-      private String token;
-      private Instant expiryDate;
+
+      private String accessToken;
+      private String refreshToken;
+      private Instant expiresIn;
+      @Builder.Default
+      private String tokenType = "Bearer";
+
 }
