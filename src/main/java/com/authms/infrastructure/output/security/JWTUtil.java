@@ -2,10 +2,10 @@ package com.authms.infrastructure.output.security;
 
 import com.authms.domain.TokenType;
 import com.authms.domain.User;
-import com.authms.infrastructure.config.Logger;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Log4j2
 @RequiredArgsConstructor
 @Component
 public class JWTUtil {
@@ -28,12 +29,10 @@ public class JWTUtil {
       @Value("${security.jwt.ttMillisExpired}")
       private long timeExpiredRefresh;
 
-      private final Logger logger;
-
       public String create(User user, TokenType tokenType) {
-            logger.log("create: ");
-            logger.log("user: " + user);
-            logger.log("tokenType: " + tokenType);
+            log.info("create: ");
+            log.info("user: " + user);
+            log.info("tokenType: " + tokenType);
 
             Map<String, Object> claims = new HashMap<>();
             claims.put("id", user.getId());
@@ -54,7 +53,7 @@ public class JWTUtil {
       }
 
       public Claims getValue(String jwt) {
-            logger.log("getValue: " + jwt);
+            log.info("getValue: " + jwt);
             try {
                   return parseToken(jwt);
             } catch (Exception e) {
@@ -63,7 +62,7 @@ public class JWTUtil {
       }
 
       public String getKey(String jwt) {
-            logger.log("getKey: " + jwt);
+            log.info("getKey: " + jwt);
             try {
                   return parseToken(jwt).getId();
             } catch (Exception e) {
@@ -72,7 +71,7 @@ public class JWTUtil {
       }
 
       private Claims parseToken(String jwt) {
-            logger.log("parseToken: " + jwt);
+            log.info("parseToken: " + jwt);
             try {
                   return Jwts.parser()
                         .verifyWith(getSigningKey())
@@ -85,7 +84,7 @@ public class JWTUtil {
       }
 
       private SecretKey getSigningKey() {
-            logger.log("getSigningKey");
+            log.info("getSigningKey");
             var apiKeySecretBytes = Base64.getDecoder().decode(key);
             return Keys.hmacShaKeyFor(apiKeySecretBytes);
       }

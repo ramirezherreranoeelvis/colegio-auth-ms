@@ -18,6 +18,7 @@ public class Token {
       private String value;
       private Instant expiryDate;
       private TokenType type;
+      private String rol;
 
       public boolean isExpired() {
             return expiryDate != null && expiryDate.isBefore(Instant.now());

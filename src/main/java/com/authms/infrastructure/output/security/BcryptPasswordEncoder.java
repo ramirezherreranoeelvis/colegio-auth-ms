@@ -2,7 +2,6 @@ package com.authms.infrastructure.output.security;
 
 import com.authms.application.port.output.IPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component

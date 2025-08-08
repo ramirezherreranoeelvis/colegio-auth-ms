@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,5 +18,6 @@ public class LoginResponse {
       private Instant expiresIn;
       @Builder.Default
       private String tokenType = "Bearer";
+      private String rol;
 
 }

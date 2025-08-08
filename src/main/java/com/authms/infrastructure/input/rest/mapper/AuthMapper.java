@@ -2,29 +2,30 @@ package com.authms.infrastructure.input.rest.mapper;
 
 import com.authms.domain.User;
 import com.authms.domain.mapper.DomainMapper;
-import com.authms.infrastructure.config.Logger;
+
 import com.authms.infrastructure.input.rest.dto.RegisterRequest;
 import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcUserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
+@Log4j2
 @AllArgsConstructor
 @Component
 public class AuthMapper {
 
       private final IR2dbcUserRepository userRepository;
       private final DomainMapper domainMapper;
-      private final Logger logger;
 
       public Mono<User> mapToUser(RegisterRequest req) {
-            logger.log("mapToUser: " + req.toString());
+            log.info("mapToUser: " + req.toString());
             Mono<Optional<User>> fatherOpt = dniToOptUser(req.getDniFather() == null ? null : req.getDniFather().toString());
             Mono<Optional<User>> motherOpt = dniToOptUser(req.getDniMother() == null ? null : req.getDniMother().toString());
             Mono<Optional<User>> reprOpt = dniToOptUser(req.getDniRepresentative() == null ? null : req.getDniRepresentative().toString());
-            logger.log("despues de doptener los mono");
+            log.info("despues de doptener los mono");
             /* 2) Zip: obtendremos (father, mother, representative) – cada uno puede ser null. */
             return Mono.zip(fatherOpt, motherOpt, reprOpt)
                   .map(t -> {

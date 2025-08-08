@@ -40,19 +40,19 @@ public class SecurityConfig {
                   )
                   .build();
       }
-//      @Bean
-//      public CorsConfigurationSource corsConfigurationSource() {
-//            CorsConfiguration configuration = new CorsConfiguration();
-//            // Permite peticiones desde cualquier origen. ¡CUIDADO en producción!
-//            configuration.setAllowedOrigins(List.of("*"));
-//            // Permite los métodos HTTP más comunes
-//            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//            // Permite cabeceras comunes, incluyendo las de autorización
-//            configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-//
-//            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//            // Aplica esta configuración a todas las rutas de tu API
-//            source.registerCorsConfiguration("/**", configuration);
-//            return source;
-//      }
+      @Bean
+      public CorsConfigurationSource corsConfigurationSource() {
+            CorsConfiguration configuration = new CorsConfiguration();
+            // Permite peticiones desde cualquier origen. ¡CUIDADO en producción!
+            configuration.setAllowedOrigins(List.of("*"));
+            // Permite los métodos HTTP más comunes
+            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            // Permite cabeceras comunes, incluyendo las de autorización
+            configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            // Aplica esta configuración a todas las rutas de tu API
+            source.registerCorsConfiguration("/**", configuration);
+            return source;
+      }
 }

@@ -1,4 +1,4 @@
-package com.producer.config;
+package com.authms.infrastructure.config;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class KafkaAdminConfig {
 
       private final KafkaProperties kafkaProperties;
+      private final String welcomeTopic;
 
       @Bean
       public KafkaAdmin kafkaAdmin() {
@@ -29,7 +30,7 @@ public class KafkaAdminConfig {
       @Bean
       public KafkaAdmin.NewTopics topics() {
             return new KafkaAdmin.NewTopics(
-                  TopicBuilder.name("str-topic")
+                  TopicBuilder.name(welcomeTopic)
                         .partitions(2)
                         .replicas(1)
                         .build()
