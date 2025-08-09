@@ -18,21 +18,16 @@ public class KafkaNotificationService {
       private final String welcomeTopic;
 
       public void sendWelcome(String username) {
-//            return Mono.fromCallable(() -> {
                   try {
                         Map<String, String> event = Map.of(
                               "username", username
                         );
-
                         String body = objectMapper.writeValueAsString(event);
                         kafkaTemplate.send(welcomeTopic, body);
 
                         log.info("Welcome email event sent for user: {}", username);
-//                        return true;
                   } catch (Exception e) {
                         log.error("Failed to send welcome email event: {}", e.getMessage());
-//                        return false;
                   }
-//            });
       }
 }
