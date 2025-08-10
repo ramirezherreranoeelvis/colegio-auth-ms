@@ -1,22 +1,23 @@
 spring:
-    application:
-        name: auth-ms-colegio
-    r2dbc:
-        url: r2dbc:mysql://mysql-container:3390/auth
-        username: root-auth
-        password: 12345
-    kafka:
-        producer:
-            bootstrap-servers: kafka:9092
+      application:
+            name: auth-ms-colegio
+      r2dbc:
+            url: r2dbc:mysql://mysql-container:3390/auth
+            username: root-auth
+            password: 12345
+      kafka:
+            producer:
+                  bootstrap-servers: kafka:9092
 server:
-    port: 8080
+      port: 8080
 
 security:
-    password:
-        default: 10002000
-    jwt:
-        secret: 9s12weewwfefefn9j1264599s12weewwfefefn9j12645s12weewwfefefn9j12645
-        issuer: Main
-        ttlMillis: 3600000
-        ttMillisExpired: 86400000
-        # 1 second = 1000 milliseconds, 1 minute = 60000 milliseconds, 1 hour = 3600000 milliseconds
+      password:
+            # Lee la variable de entorno DEFAULT_PASSWORD. Si no existe, usa 12345 como valor por defecto.
+            default: ${DEFAULT_PASSWORD:12345}
+      jwt:
+            # Lee la variable de entorno JWT_SECRET.
+            secret: ${JWT_SECRET}
+            issuer: Main
+            ttlMillis: 3600000
+            ttMillisExpired: 86400000
