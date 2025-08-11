@@ -64,7 +64,8 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase,
                               .rol(user.getRol().toString())
                               .build();
                         log.info("antes");
-                        this.kafkaNotificationService.sendWelcome(user.getAccess().getUsername());
+
+                        this.kafkaNotificationService.sendWelcome(user, accessToken);
                         log.info("despues");
                         return TokenPair.builder()
                               .accessToken(accessToken)
