@@ -3,10 +3,7 @@ package com.authms.infrastructure.input.rest;
 import com.authms.application.port.input.LoginUseCase;
 import com.authms.application.port.input.RefreshTokenUseCase;
 import com.authms.application.port.input.RegisterUserUseCase;
-import com.authms.infrastructure.input.rest.dto.LoginRequest;
-import com.authms.infrastructure.input.rest.dto.LoginResponse;
-import com.authms.infrastructure.input.rest.dto.RegisterRequest;
-import com.authms.infrastructure.input.rest.dto.RegisterResponse;
+import com.authms.infrastructure.input.rest.dto.*;
 import com.authms.infrastructure.input.rest.mapper.AuthMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,9 +44,19 @@ class AuthController {
 
       @PostMapping("/register")
       public Mono<ResponseEntity<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request) {
-            log.info("register: " + request.toString());
             return authMapper.mapToUser(request)
                   .flatMap(registerUserUseCase::registerUser)
+                  .map(user -> ResponseEntity.ok(
+                        RegisterResponse.builder()
+                              .username(user.getAccess().getUsername())
+                              .password(user.getAccess().getPassword())
+                              .build()));
+      }
+
+      @PostMapping("/register-student")
+      public Mono<ResponseEntity<RegisterResponse>> registerStudent(@Valid @RequestBody RegisterStudentRequest request) {
+            return authMapper.mapToUser(request)
+                  .flatMap(registerUserUseCase::registerStudent)
                   .map(user -> ResponseEntity.ok(
                         RegisterResponse.builder()
                               .username(user.getAccess().getUsername())

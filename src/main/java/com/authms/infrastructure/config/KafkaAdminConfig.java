@@ -16,6 +16,7 @@ public class KafkaAdminConfig {
 
       private final KafkaProperties kafkaProperties;
       private final String welcomeTopic;
+      private final String studentRegisterTopic;
 
       @Bean
       public KafkaAdmin kafkaAdmin() {
@@ -32,6 +33,10 @@ public class KafkaAdminConfig {
             return new KafkaAdmin.NewTopics(
                   TopicBuilder.name(welcomeTopic)
                         .partitions(2)
+                        .replicas(1)
+                        .build(),
+                  TopicBuilder.name(studentRegisterTopic)
+                        .partitions(3)
                         .replicas(1)
                         .build()
             );

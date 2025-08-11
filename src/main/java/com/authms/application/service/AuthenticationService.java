@@ -12,6 +12,7 @@ import com.authms.domain.exception.UserAlreadyExistsException;
 import com.authms.domain.mapper.DomainMapper;
 import com.authms.infrastructure.config.AuditingConfig;
 import com.authms.infrastructure.output.KafkaNotificationService;
+import com.authms.infrastructure.output.persistence.enums.RolUser;
 import com.authms.infrastructure.output.security.IJwtRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -94,6 +95,30 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase,
                   .flatMap(user1 -> {
                         AuditingConfig.setAuditor(AuditActionType.SELF_REGISTRATION.getValue());
                         return this.userRepository.save(user1)
+                              .doFinally(s -> AuditingConfig.clearAuditor());
+                  });
+      }
+
+      @Override
+      public Mono<User> registerStudent(User user) {
+            log.info("registerStudent: " + user.toString());
+            return this.userRepository.existsByDni(user.getDni())
+                  .filter(exists -> !exists)
+                  .switchIfEmpty(Mono.error(new UserAlreadyExistsException("Ya existe un usuario con ese dni registrado")))
+                  .then(createAccess(user))
+                  .map(acc -> {
+                        user.setAccess(acc);
+                        return user;
+                  })
+                  .flatMap(user1 -> {
+                        AuditingConfig.setAuditor(AuditActionType.SELF_REGISTRATION.getValue());
+                        return this.userRepository.save(user1)
+                              .doOnSuccess(savedUser -> {
+                                    if (savedUser.getRol() == RolUser.STUDENT) {
+                                          log.info("El usuario es un estudiante. Enviando evento a Kafka...");
+                                          kafkaNotificationService.sendStudentRegisterTopic(savedUser);
+                                    }
+                              })
                               .doFinally(s -> AuditingConfig.clearAuditor());
                   });
       }

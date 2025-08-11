@@ -23,6 +23,8 @@ public class KafkaProducerConfig {
       private final KafkaProperties kafkaProperties;
       @Value("welcome-topic")
       private String welcomeTopic;
+      @Value("student-register-topic")
+      private String studentRegisterTopic;
 
       @Bean
       public ProducerFactory<String, String> producerFactory() {
@@ -43,6 +45,11 @@ public class KafkaProducerConfig {
       @Bean
       public String welcomeTopic() {
             return welcomeTopic;
+      }
+
+      @Bean
+      public String studentRegisterTopic() {
+            return studentRegisterTopic;
       }
 
 }
