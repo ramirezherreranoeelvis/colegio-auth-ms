@@ -1,23 +1,20 @@
-spring:
-      application:
-            name: auth-ms-colegio
-      r2dbc:
-            url: r2dbc:mysql://mysql-container:3390/auth
-            username: root-auth
-            password: 12345
-      kafka:
-            producer:
-                  bootstrap-servers: kafka:9092
 server:
-      port: 8080
+    port: ${PORT:8000}
+spring:
+    application:
+        name: auth-ms-colegio
+    r2dbc:
+        url: r2dbc:mysql://${MYSQL_HOST:localhost:3390}/auth
+        username: root-auth
+        password: a1s2d3f4g5h6
+    kafka:
+        bootstrap-servers: ${KAFKA_HOST:localhost:9092}
 
 security:
-      password:
-            # Lee la variable de entorno DEFAULT_PASSWORD. Si no existe, usa 12345 como valor por defecto.
-            default: ${DEFAULT_PASSWORD:12345}
-      jwt:
-            # Lee la variable de entorno JWT_SECRET.
-            secret: ${JWT_SECRET}
-            issuer: Main
-            ttlMillis: 3600000
-            ttMillisExpired: 86400000
+    password:
+        default: ${DEFAULT_PASSWORD:10002000}
+    jwt:
+        secret: ${JWT_SECRET:VGhpcy1pcy1hLW11Y2gtc3Ryb25nZXItYW5kLXNlY3VyZS1rZXktZm9yLUpoVw==}
+        issuer: Main
+        ttlMillis: 3600000
+        ttMillisExpired: 86400000

@@ -24,9 +24,6 @@ RUN addgroup --system --gid 1001 appgroup && \
     chown appuser:appgroup /app.jar
 USER appuser
 
-EXPOSE 8090
-
-#HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-#    CMD curl -f http://localhost:8090/actuator/health || exit 1
+EXPOSE 8000
 
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
