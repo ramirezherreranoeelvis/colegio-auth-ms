@@ -68,6 +68,7 @@ public class KafkaNotificationService {
             try {
                   Map<String, String> event = Map.of(
                         "id", user.getId(),
+                        "phone", user.getPhone(),
                         "name", user.getName(),
                         "surnamePaternal", user.getSurnamePaternal(),
                         "surnameMaternal", user.getSurnameMaternal()
