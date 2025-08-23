@@ -9,4 +9,6 @@ public interface RegisterUserUseCase {
 
       Mono<User> registerStudent(User user);
 
+      Mono<User> registerTeacher(User user);
+
 }

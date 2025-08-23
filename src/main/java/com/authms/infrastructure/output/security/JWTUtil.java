@@ -1,6 +1,6 @@
 package com.authms.infrastructure.output.security;
 
-import com.authms.domain.TokenType;
+import com.authms.domain.enums.TokenType;
 import com.authms.domain.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

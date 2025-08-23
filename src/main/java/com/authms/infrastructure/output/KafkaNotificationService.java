@@ -20,6 +20,7 @@ public class KafkaNotificationService {
       private final ObjectMapper objectMapper;
       private final String welcomeTopic;
       private final String studentRegisterTopic;
+      private final String teacherRegisterTopic;
 
       public void sendWelcome(User user, Token token) {
             try {
@@ -50,17 +51,33 @@ public class KafkaNotificationService {
                         "fatherId", user.getFather().getId(),
                         "motherId", user.getMother().getId(),
                         "representativeId", user.getRepresentative().getId(),
-                        "dni", user.getDni(),
                         "surnamePaternal", user.getSurnamePaternal(),
                         "surnameMaternal", user.getSurnameMaternal(),
                         "name", user.getName()
                   );
                   String body = objectMapper.writeValueAsString(event);
-                  kafkaTemplate.send(welcomeTopic, body);
+                  kafkaTemplate.send(studentRegisterTopic, body);
 
                   log.info("Welcome email event sent for user: {}", user.getAccess().getUsername());
             } catch (Exception e) {
                   log.error("Failed to send welcome email event: {}", e.getMessage());
+            }
+      }
+
+      public void sendTeacherRegisterTopic(User user) {
+            try {
+                  Map<String, String> event = Map.of(
+                        "id", user.getId(),
+                        "name", user.getName(),
+                        "surnamePaternal", user.getSurnamePaternal(),
+                        "surnameMaternal", user.getSurnameMaternal()
+                  );
+                  String body = objectMapper.writeValueAsString(event);
+                  kafkaTemplate.send(teacherRegisterTopic, body);
+
+                  log.info("Evento de registro de profesor enviado para el usuario: {}", user.getAccess().getUsername());
+            } catch (Exception e) {
+                  log.error("Fallo al enviar el evento de registro de profesor: {}", e.getMessage());
             }
       }
 

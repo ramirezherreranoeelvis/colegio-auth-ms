@@ -3,10 +3,13 @@ package com.authms.infrastructure.input.rest.mapper;
 import com.authms.domain.User;
 import com.authms.domain.mapper.DomainMapper;
 
-import com.authms.infrastructure.input.rest.dto.RegisterRequest;
-import com.authms.infrastructure.input.rest.dto.RegisterStudentRequest;
+import com.authms.infrastructure.input.rest.dto.register.RegisterRequest;
+import com.authms.infrastructure.input.rest.dto.register.RegisterStudentRequest;
+import com.authms.infrastructure.input.rest.dto.register.RegisterTeacherRequest;
+import com.authms.infrastructure.output.persistence.enums.RolUser;
 import com.authms.infrastructure.output.persistence.repository.interfaces.IR2dbcUserRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -14,7 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @Log4j2
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class AuthMapper {
 
@@ -77,6 +80,23 @@ public class AuthMapper {
 
       }
 
+      public Mono<User> mapToUser(RegisterTeacherRequest req) {
+            log.info("mapToUser: " + req.toString());
+            log.info("despues de doptener los mono");
+
+            return Mono.just(
+                  User.builder()
+                        .name(req.getName())
+                        .surnamePaternal(req.getSurnamePaternal())
+                        .surnameMaternal(req.getSurnameMaternal())
+                        .phone(req.getPhone())
+                        .dni(req.getDni().toString())
+                        .rol(RolUser.TEACHER)
+                        .build()
+            );
+      }
+
+
       private Mono<Optional<User>> dniToOptUser(String dni) {
             return dni == null
                   ? Mono.just(Optional.empty())
@@ -85,5 +105,6 @@ public class AuthMapper {
                   .map(Optional::of)
                   .switchIfEmpty(Mono.just(Optional.empty()));
       }
+
 
 }

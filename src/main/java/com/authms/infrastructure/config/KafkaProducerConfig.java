@@ -21,10 +21,12 @@ import static org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG;
 public class KafkaProducerConfig {
 
       private final KafkaProperties kafkaProperties;
-      @Value("welcome-topic")
+      @Value("${spring.kafka.topics.auth-login}")
       private String welcomeTopic;
-      @Value("student-register-topic")
+      @Value("${spring.kafka.topics.students-created}")
       private String studentRegisterTopic;
+      @Value("${spring.kafka.topics.teacher-created}")
+      private String teacherRegisterTopic;
 
       @Bean
       public ProducerFactory<String, String> producerFactory() {
@@ -50,6 +52,11 @@ public class KafkaProducerConfig {
       @Bean
       public String studentRegisterTopic() {
             return studentRegisterTopic;
+      }
+
+      @Bean
+      public String teacherRegisterTopic() {
+            return teacherRegisterTopic;
       }
 
 }

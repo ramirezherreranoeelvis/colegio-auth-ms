@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterStudentRequest {
+public class RegisterTeacherRequest {
 
       @NotBlank(message = "El nombre del usuario es obligatorio")
       private String name;
@@ -40,19 +40,5 @@ public class RegisterStudentRequest {
       @Digits(integer = 8, fraction = 0, message = "El dni debe tener 8 digitos")
       @NotNull(message = "El dni del usuario es obligatorio")
       private Integer dni;
-
-      @ValueOfEnum(enumClass = RolUser.class, message = "El rol de usuario es obligatorio")
-      private RolUser rol;
-
-      @NotBlank(message = "El apellido Paterno del usuario es obligatorio")
-      @Digits(integer = 8, fraction = 0, message = "El dni del padre debe tener 8 digitos")
-      private Integer dniFather;
-
-      @NotBlank(message = "El apellido Materno del usuario es obligatorio")
-      @Digits(integer = 8, fraction = 0, message = "El dni de la madre debe tener 8 digitos")
-      private Integer dniMother;
-
-      @Digits(integer = 8, fraction = 0, message = "El dni del representante debe tener 8 digitos")
-      private Integer dniRepresentative;
 
 }

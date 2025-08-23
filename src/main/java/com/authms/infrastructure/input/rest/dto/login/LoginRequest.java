@@ -1,4 +1,4 @@
-package com.authms.infrastructure.input.rest.dto;
+package com.authms.infrastructure.input.rest.dto.login;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

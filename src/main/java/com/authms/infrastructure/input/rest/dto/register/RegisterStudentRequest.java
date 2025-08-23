@@ -1,4 +1,4 @@
-package com.authms.infrastructure.input.rest.dto;
+package com.authms.infrastructure.input.rest.dto.register;
 
 import com.authms.infrastructure.input.rest.validators.PhoneNumber;
 import com.authms.infrastructure.input.rest.validators.ValueOfEnum;

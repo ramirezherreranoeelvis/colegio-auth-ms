@@ -1,4 +1,4 @@
-package com.authms.domain;
+package com.authms.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

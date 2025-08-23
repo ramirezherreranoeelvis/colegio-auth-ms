@@ -1,5 +1,6 @@
 package com.authms.domain;
 
+import com.authms.domain.enums.TokenType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -9,6 +9,10 @@ spring:
         password: a1s2d3f4g5h6
     kafka:
         bootstrap-servers: ${KAFKA_HOST:localhost:9092}
+        topics:
+            auth-login: welcome-topic
+            students-created: students.created.v1
+            teacher-created: teacher.created
 
 security:
     password:

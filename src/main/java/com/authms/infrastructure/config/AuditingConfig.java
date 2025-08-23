@@ -1,6 +1,6 @@
 package com.authms.infrastructure.config;
 
-import com.authms.domain.AuditActionType;
+import com.authms.domain.enums.AuditActionType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.ReactiveAuditorAware;
