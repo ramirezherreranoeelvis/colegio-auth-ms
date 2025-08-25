@@ -1,17 +1,13 @@
 package com.authms.infrastructure.output.notification.mapper;
 
-import com.authms.application.port.input.IFindUserUseCase;
 import com.authms.domain.Token;
 import com.authms.domain.User;
-import com.authms.domain.enums.RolUser;
 import com.authms.infrastructure.output.notification.dto.StudentRegisteredEvent;
+import com.authms.infrastructure.output.notification.dto.TeacherRegisteredEvent;
 import com.authms.infrastructure.output.notification.dto.UserWelcome;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -41,6 +37,16 @@ public class ProducerMapper {
                   .fatherDni(fatherDni)
                   .motherDni(motherDni)
                   .representativeDni(representativeDni)
+                  .build();
+      }
+
+      public TeacherRegisteredEvent mapToProducer(User teacher) {
+            return TeacherRegisteredEvent.builder()
+                  .id(teacher.getId())
+                  .phone(teacher.getPhone())
+                  .name(teacher.getName())
+                  .surnamePaternal(teacher.getSurnamePaternal())
+                  .surnameMaternal(teacher.getSurnameMaternal())
                   .build();
       }
 

@@ -3,6 +3,7 @@ package com.authms.infrastructure.output.notification;
 import com.authms.domain.Token;
 import com.authms.domain.User;
 import com.authms.infrastructure.output.notification.dto.StudentRegisteredEvent;
+import com.authms.infrastructure.output.notification.dto.TeacherRegisteredEvent;
 import com.authms.infrastructure.output.notification.dto.UserWelcome;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -51,22 +52,20 @@ public class KafkaNotificationService {
                   .then();
       }
 
-      public void sendTeacherRegisterTopic(User user) {
-            try {
-                  Map<String, String> event = Map.of(
-                        "id", user.getId(),
-                        "phone", user.getPhone(),
-                        "name", user.getName(),
-                        "surnamePaternal", user.getSurnamePaternal(),
-                        "surnameMaternal", user.getSurnameMaternal()
-                  );
-                  String body = objectMapper.writeValueAsString(event);
-                  kafkaTemplate.send(teacherRegisterTopic, body);
+      public Mono<Void> sendTeacherRegisterTopic(TeacherRegisteredEvent teacher) {
+            return Mono.fromRunnable(() -> {
+                        try {
+                              String body = objectMapper.writeValueAsString(teacher);
+                              kafkaTemplate.send(teacherRegisterTopic, body);
 
-                  log.info("Evento de registro de profesor enviado para el usuario: {}", user.getAccess().getUsername());
-            } catch (Exception e) {
-                  log.error("Fallo al enviar el evento de registro de profesor: {}", e.getMessage());
-            }
+                              log.info("Evento de registro de profesor enviado para el usuario: {}", teacher.id());
+                        } catch (Exception e) {
+                              log.error("Fallo al enviar el evento de registro de profesor: {}", e.getMessage());
+                        }
+                  })
+                  .subscribeOn(Schedulers.boundedElastic())
+                  .then();
+
       }
 
 }

@@ -12,6 +12,7 @@ import com.authms.infrastructure.input.rest.dto.register.RegisterStudentRequest;
 import com.authms.infrastructure.input.rest.mapper.AuthMapper;
 import com.authms.infrastructure.output.notification.KafkaNotificationService;
 import com.authms.infrastructure.output.notification.dto.StudentRegisteredEvent;
+import com.authms.infrastructure.output.notification.dto.TeacherRegisteredEvent;
 import com.authms.infrastructure.output.notification.mapper.ProducerMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -76,7 +77,7 @@ public class UsersService implements RegisterUserUseCase, IFindUserUseCase {
                         // 4. Continúa con la lógica de registro que ya tenías
                         return userRepository.existsByDni(studentToRegister.getDni())
                               .filter(exists -> !exists)
-                              .switchIfEmpty(Mono.error(new UserAlreadyExistsException("...")))
+                              .switchIfEmpty(Mono.error(new UserAlreadyExistsException("Ya existe un estudiante con ese dni")))
                               .then(registerAccessUseCase.create(studentToRegister))
                               .map(acc -> {
                                     studentToRegister.setAccess(acc);
@@ -135,12 +136,15 @@ public class UsersService implements RegisterUserUseCase, IFindUserUseCase {
                   })
                   .flatMap(userToSave -> {
                         AuditingConfig.setAuditor(AuditActionType.ADMIN.getValue());
+                        return userRepository.save(userToSave);
+                  })
+                  .flatMap(savedTeacher -> {
+                        TeacherRegisteredEvent event = producerMapper.mapToProducer(savedTeacher);
 
-                        return userRepository.save(userToSave).doOnSuccess(savedUser -> {
-                              log.info("Profesor registrado exitosamente. Enviando evento a Kafka...");
-                              kafkaNotificationService.sendTeacherRegisterTopic(savedUser);
-                        }).doFinally(signalType -> AuditingConfig.clearAuditor());
-                  });
+                        return kafkaNotificationService.sendTeacherRegisterTopic(event)
+                              .thenReturn(savedTeacher);
+                  })
+                  .doAfterTerminate(AuditingConfig::clearAuditor);
       }
 
       @Override
