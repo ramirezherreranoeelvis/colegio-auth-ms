@@ -1,6 +1,5 @@
 package com.authms.domain.mapper;
 
-import com.authms.application.port.output.IAccessRepository;
 import com.authms.domain.Access;
 import com.authms.domain.User;
 import com.authms.infrastructure.output.persistence.entity.AccessEntity;
@@ -28,9 +27,11 @@ public class DomainMapper {
                         .surnamePaternal(userEntity.getSurnamePaternal())
                         .surnameMaternal(userEntity.getSurnameMaternal())
                         .phone(userEntity.getPhone())
+                        .fatherId(userEntity.getIdFather())
+                        .motherId(userEntity.getIdMother())
+                        .representativeId(userEntity.getIdRepresentative())
                         .access(access)
-                        .build())
-                  ;
+                        .build());
       }
 
       public Access mapToDomain(AccessEntity accessEntity) {
@@ -53,6 +54,9 @@ public class DomainMapper {
                         .surnameMaternal(userEntity.getSurnameMaternal())
                         .phone(userEntity.getPhone())
                         .rol(userEntity.getRol())
+                        .fatherId(userEntity.getIdFather())
+                        .motherId(userEntity.getIdMother())
+                        .representativeId(userEntity.getIdRepresentative())
                         .access(access)
                         .build());
       }

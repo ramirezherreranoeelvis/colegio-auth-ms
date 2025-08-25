@@ -2,18 +2,14 @@ package com.authms.infrastructure.output.notification.dto; // O donde prefieras
 
 import lombok.Builder;
 
-import java.time.Instant;
-
 // Un 'record' es una clase inmutable ideal para DTOs.
 @Builder
-public record UserWelcome(
-      String token,
-      Instant expiryDate,
+public record StudentRegisteredEvent(
       String id,
-      String username,
-      Integer dni,
-      String rol,
       String name,
       String surnamePaternal,
-      String surnameMaternal
+      String surnameMaternal,
+      Integer fatherDni,
+      Integer motherDni,
+      Integer representativeDni
 ) {}

@@ -8,7 +8,9 @@ import com.authms.domain.*;
 import com.authms.domain.enums.TokenType;
 import com.authms.domain.exception.AuthenticationException;
 import com.authms.domain.mapper.DomainMapper;
-import com.authms.infrastructure.output.KafkaNotificationService;
+import com.authms.infrastructure.output.notification.KafkaNotificationService;
+import com.authms.infrastructure.output.notification.dto.UserWelcome;
+import com.authms.infrastructure.output.notification.mapper.ProducerMapper;
 import com.authms.infrastructure.output.security.IJwtRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,22 +30,33 @@ public class AuthenticationService implements LoginUseCase, RefreshTokenUseCase 
       private final IJwtRepository jwtRepository;
       private final DomainMapper domainMapper;
       private final KafkaNotificationService kafkaNotificationService;
+      private final ProducerMapper producerMapper;
 
       @Override
       public Mono<TokenPair> login(String username, String password) {
-            return this.accessRepository.findByUsername(username).switchIfEmpty(Mono.error(new AuthenticationException("Usuario no existente"))).filter(access -> passwordEncoder.matches(password, access.getPassword())).switchIfEmpty(Mono.error(new AuthenticationException("Contraseña inválida"))).flatMap(domainMapper::mapToDomainUser).map(user -> {
-                  var accessTokenValue = jwtRepository.generateToken(user, TokenType.ACCESS);
-                  var refreshTokenValue = jwtRepository.generateToken(user, TokenType.REFRESH);
+            return this.accessRepository.findByUsername(username).switchIfEmpty(Mono.error(new AuthenticationException("Usuario no existente")))
+                  .filter(access -> passwordEncoder.matches(password, access.getPassword()))
+                  .switchIfEmpty(Mono.error(new AuthenticationException("Contraseña inválida")))
+                  .flatMap(domainMapper::mapToDomainUser)
+                  .map(user -> {
+                        var accessTokenValue = jwtRepository.generateToken(user, TokenType.ACCESS);
+                        var refreshTokenValue = jwtRepository.generateToken(user, TokenType.REFRESH);
 
-                  var accessToken = Token.builder().userId(user.getId()).value(accessTokenValue).expiryDate(Instant.now().plus(30, ChronoUnit.MINUTES)).type(TokenType.ACCESS).rol(user.getRol().toString()).build();
+                        var accessToken = Token.builder().userId(user.getId()).value(accessTokenValue)
+                              .expiryDate(Instant.now().plus(30, ChronoUnit.MINUTES))
+                              .type(TokenType.ACCESS)
+                              .rol(user.getRol().toString()).build();
 
-                  var refreshToken = Token.builder().userId(user.getId()).value(refreshTokenValue).expiryDate(Instant.now().plus(7, ChronoUnit.DAYS)).type(TokenType.REFRESH).rol(user.getRol().toString()).build();
-                  log.info("antes");
+                        var refreshToken = Token.builder()
+                              .userId(user.getId()).value(refreshTokenValue)
+                              .expiryDate(Instant.now().plus(7, ChronoUnit.DAYS))
+                              .type(TokenType.REFRESH)
+                              .rol(user.getRol().toString()).build();
 
-                  this.kafkaNotificationService.sendWelcome(user, accessToken);
-                  log.info("despues");
-                  return TokenPair.builder().accessToken(accessToken).refreshToken(refreshToken).build();
-            });
+                        this.kafkaNotificationService.sendWelcome(producerMapper.mapToProducer(user, accessToken));
+
+                        return TokenPair.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+                  });
 
       }
 

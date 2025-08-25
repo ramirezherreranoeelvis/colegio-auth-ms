@@ -1,4 +1,4 @@
-package com.authms.infrastructure.output.persistence.enums;
+package com.authms.domain.enums;
 
 import java.util.Arrays;
 public enum RolUser {

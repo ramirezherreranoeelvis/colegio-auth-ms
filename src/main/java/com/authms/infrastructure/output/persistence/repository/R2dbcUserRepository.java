@@ -43,7 +43,7 @@ public class R2dbcUserRepository implements IUserRepository {
 
       @Override
       @Transactional
-      public Mono<Boolean> existsByDni(String dni) {
+      public Mono<Boolean> existsByDni(Integer dni) {
             return userRepository.existsByDni(dni);
       }
 
@@ -51,6 +51,20 @@ public class R2dbcUserRepository implements IUserRepository {
       public Mono<User> findByAccess(Access access) {
             return this.userRepository.findByIdAccess(access.getId())
                   .flatMap(domainMapper::mapToDomain);
+      }
+
+      @Override
+      public Mono<User> findById(String id) {
+            return userRepository.findById(id)
+                  .flatMap(domainMapper::mapToDomain);
+
+      }
+
+      @Override
+      public Mono<User> findByDni(Integer dni) {
+            return userRepository.findByDni(dni)
+                  .flatMap(domainMapper::mapToDomain);
+
       }
 
 }

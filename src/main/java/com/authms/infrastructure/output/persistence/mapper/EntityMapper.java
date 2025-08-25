@@ -10,9 +10,6 @@ import org.springframework.stereotype.Component;
 public class EntityMapper {
 
       public UserEntity mapToEntity(User userDomain) {
-            var idFather = userDomain.getFather() == null ? null : userDomain.getFather().getId();
-            var idMother = userDomain.getMother() == null ? null : userDomain.getMother().getId();
-            var idRepresentative = userDomain.getRepresentative() == null ? null : userDomain.getRepresentative().getId();
             return UserEntity.builder()
                   .id(userDomain.getId())
                   .dni(userDomain.getDni())
@@ -22,9 +19,9 @@ public class EntityMapper {
                   .phone(userDomain.getPhone())
                   .rol(userDomain.getRol())
                   .idAccess(userDomain.getAccess().getId())
-                  .idFather(idFather)
-                  .idMother(idMother)
-                  .idRepresentative(idRepresentative)
+                  .idFather(userDomain.getFatherId())
+                  .idMother(userDomain.getMotherId())
+                  .idRepresentative(userDomain.getRepresentativeId())
                   .createdBy(userDomain.getCreatedBy())
                   .createdDate(userDomain.getCreatedDate())
                   .lastModifiedBy(userDomain.getLastModifiedBy())

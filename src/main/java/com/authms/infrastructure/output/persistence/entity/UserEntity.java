@@ -1,6 +1,6 @@
 package com.authms.infrastructure.output.persistence.entity;
 
-import com.authms.infrastructure.output.persistence.enums.RolUser;
+import com.authms.domain.enums.RolUser;
 
 
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class UserEntity extends AuditableEntity implements Persistable<String> {
       private String id;
 
       @Column("dni")
-      private String dni;
+      private Integer dni;
 
       @Column("name")
       private String name;

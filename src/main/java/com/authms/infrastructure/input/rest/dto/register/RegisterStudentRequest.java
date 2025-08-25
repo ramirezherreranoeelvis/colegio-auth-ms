@@ -1,8 +1,6 @@
 package com.authms.infrastructure.input.rest.dto.register;
 
 import com.authms.infrastructure.input.rest.validators.PhoneNumber;
-import com.authms.infrastructure.input.rest.validators.ValueOfEnum;
-import com.authms.infrastructure.output.persistence.enums.RolUser;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -41,14 +39,9 @@ public class RegisterStudentRequest {
       @NotNull(message = "El dni del usuario es obligatorio")
       private Integer dni;
 
-      @ValueOfEnum(enumClass = RolUser.class, message = "El rol de usuario es obligatorio")
-      private RolUser rol;
-
-      @NotBlank(message = "El apellido Paterno del usuario es obligatorio")
       @Digits(integer = 8, fraction = 0, message = "El dni del padre debe tener 8 digitos")
       private Integer dniFather;
 
-      @NotBlank(message = "El apellido Materno del usuario es obligatorio")
       @Digits(integer = 8, fraction = 0, message = "El dni de la madre debe tener 8 digitos")
       private Integer dniMother;
 

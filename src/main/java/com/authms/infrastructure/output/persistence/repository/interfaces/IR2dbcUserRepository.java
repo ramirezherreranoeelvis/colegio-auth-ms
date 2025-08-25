@@ -8,9 +8,9 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface IR2dbcUserRepository extends ReactiveCrudRepository<UserEntity, String> {
 
-      Mono<Boolean> existsByDni(String dni);
+      Mono<Boolean> existsByDni(Integer dni);
 
-      Mono<UserEntity> findByDni(String dni);
+      Mono<UserEntity> findByDni(Integer dni);
 
       Mono<UserEntity> findByIdAccess(String accessId);
 

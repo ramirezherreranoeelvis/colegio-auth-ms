@@ -7,9 +7,12 @@ public interface IUserRepository {
 
       Mono<User> save(User user);
 
-      Mono<Boolean> existsByDni(String dni);
+      Mono<Boolean> existsByDni(Integer dni);
 
       Mono<User> findByAccess(Access access);
 
+      Mono<User> findById(String id);
+
+      Mono<User> findByDni(Integer dni);
 
 }

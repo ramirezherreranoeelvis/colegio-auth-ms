@@ -36,10 +36,8 @@ public class RegisterController {
 
       @PostMapping("/student")
       public Mono<ResponseEntity<RegisterResponse>> student(@Valid @RequestBody RegisterStudentRequest request) {
-            return authMapper.mapToUser(request)
-                  .flatMap(registerUserUseCase::registerStudent)
+            return registerUserUseCase.registerStudent(request)
                   .map(responseMapper::toRegisterResponse);
-
       }
 
       @PostMapping("/teacher")

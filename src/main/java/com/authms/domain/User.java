@@ -1,6 +1,6 @@
 package com.authms.domain;
 
-import com.authms.infrastructure.output.persistence.enums.RolUser;
+import com.authms.domain.enums.RolUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,15 +15,15 @@ import lombok.experimental.SuperBuilder;
 public class User extends Auditable {
 
       private String id;
-      private String dni;
+      private Integer dni;
       private String name;
       private String surnamePaternal;
       private String surnameMaternal;
       private String phone;
       private Access access;
       private RolUser rol;
-      private User father;
-      private User mother;
-      private User representative;
+      private String fatherId;
+      private String motherId;
+      private String representativeId;
 
 }

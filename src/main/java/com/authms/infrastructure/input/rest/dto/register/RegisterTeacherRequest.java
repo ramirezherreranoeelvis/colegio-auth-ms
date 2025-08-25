@@ -1,8 +1,6 @@
 package com.authms.infrastructure.input.rest.dto.register;
 
 import com.authms.infrastructure.input.rest.validators.PhoneNumber;
-import com.authms.infrastructure.input.rest.validators.ValueOfEnum;
-import com.authms.infrastructure.output.persistence.enums.RolUser;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
