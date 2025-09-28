@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+### TEXT CODE ###
+all.txt
+application.txt
+domain.txt
+infrastructure.txt
